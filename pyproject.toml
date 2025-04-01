@@ -1,7 +1,7 @@
 [project]
-name = "simulator"
+name = "phys_sim"
 version = "0.1.0"
-description = "Add your description here"
+description = "A package to simulate the ur3e robot arm physics for security usages"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
