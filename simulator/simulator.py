@@ -35,7 +35,6 @@ class Simulator:
         if self.log:
             print("[SIMULATOR] ", *args)
 
-
     def _isAtPosition(self, angles, tolerance=1e-2)-> bool:
         joint_positions = [p.getJointState(self.robot_id, self.joint_mapping[i])[0] for i in self.joint_mapping]
         for i, a in enumerate(joint_positions):
@@ -62,7 +61,7 @@ class Simulator:
 
     def isMoveValid(self, startAngles, destAngles):
         self.resetAtPosition(startAngles)
-        self.moveToAngles()
+        return self.moveToAngles()
 
 
     def motorMove(self, angles, force=10):
@@ -75,10 +74,14 @@ class Simulator:
                 force=force
             )
 
-    def moveToAngles(self, angles):
+    def moveToAngles(self, angles, checkCollision=False):
         self.motorMove(angles)
+        collided = False
         while not self._isAtPosition(angles):
             self.stepSimu()
+            if checkCollision and self.check_collision():
+                collided = True
+        return collided
 
     def isPenInArea(self, x_bounds=(-0.0, 0.5), y_bounds=(-0.5, 0.5), z_bounds=(0, 0.5)):
 
@@ -123,6 +126,8 @@ class Simulator:
 
         if not self.check_working_area():
             isInCollision = False
+
+        return isInCollision
         
 
 
