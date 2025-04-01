@@ -13,6 +13,8 @@ setup(
     package_data={
         "phys_sim": [
             "urdfs/*",
+            "urdfs/collision/*",
+            "urdfs/visual/*",
         ],
     },
 )
