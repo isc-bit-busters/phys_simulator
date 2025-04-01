@@ -1,0 +1,10 @@
+[project]
+name = "simulator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.2.4",
+    "pybullet>=3.2.7",
+]
