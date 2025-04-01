@@ -61,7 +61,7 @@ class Simulator:
 
     def isMoveValid(self, startAngles, destAngles):
         self.resetAtPosition(startAngles)
-        return self.moveToAngles()
+        return self.moveToAngles(destAngles, checkCollision=True)
 
 
     def motorMove(self, angles, force=10):
