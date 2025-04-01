@@ -12,7 +12,7 @@ setup(
     description="A package to simulate the ur3e robot arm physics for security usages",
     package_data={
         "phys_sim": [
-            "simulator/urdfs/*",
+            "urdfs/*",
         ],
     },
 )
