@@ -62,6 +62,7 @@ class Simulator:
 
     def isMoveValid(self, startAngles, destAngles):
         self.resetAtPosition(startAngles)
+        self.moveToAngles()
 
 
     def motorMove(self, angles, force=10):
@@ -78,8 +79,6 @@ class Simulator:
         self.motorMove(angles)
         while not self._isAtPosition(angles):
             self.stepSimu()
-
-
 
     def isPenInArea(self, x_bounds=(-0.0, 0.5), y_bounds=(-0.5, 0.5), z_bounds=(0, 0.5)):
 
