@@ -47,7 +47,7 @@ class Simulator:
 
 
     def resetAtPosition(self, angles):
-        for i, joint_id in enumerate(self.mapping.values()):
+        for i, joint_id in enumerate(self.joint_mapping.values()):
             p.resetJointState(self.robot_id, joint_id, angles[i])
 
 
