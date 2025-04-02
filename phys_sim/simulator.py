@@ -124,8 +124,8 @@ class Simulator:
                 self._log(f"⚠️ Collision with Ground: {getLinkName(contact[3])} touched the ground!")
                 isInCollision = False  # Collision detected
 
-        if not self.check_working_area():
-            isInCollision = False
+        #if not self.check_working_area():
+        #    isInCollision = False
 
         return isInCollision
         
@@ -136,3 +136,4 @@ class Simulator:
 if __name__ == "__main__":
     simu = Simulator(gui = True, log=True)
     print(simu._getLinkName(11))
+    
