@@ -1,16 +1,28 @@
 import os
 import time
 import pybullet as p
-
+from enum import Enum
 
 from .tools import getPath
+
+
+class RobotVersion(Enum):
+    GRIPPER = 0
+    PEN = 1
+
 
 class Simulator:
 
     gui: bool
     joint_mapping = {0: 2, 1: 3, 2: 4, 3: 5, 4: 6, 5: 7}
 
-    def __init__(self, gui: bool = False, deltaT: float = 1 / 100, log=False):
+    def __init__(
+        self,
+        robot_version: RobotVersion = RobotVersion.PEN,
+        gui: bool = False,
+        deltaT: float = 1 / 100,
+        log=False,
+    ):
 
         self.gui = gui
 
@@ -25,7 +37,21 @@ class Simulator:
             self.stepSimu = lambda: p.stepSimulation()
         p.setTimeStep(deltaT)
 
-        self.robot_id = p.loadURDF(getPath("urdfs/iscoin_azz.urdf"), useFixedBase=True, flags=p.URDF_USE_SELF_COLLISION)
+        if robot_version == RobotVersion.PEN:
+            self.robot_id = p.loadURDF(
+                getPath("urdfs/iscoin_pen.urdf"),
+                useFixedBase=True,
+                flags=p.URDF_USE_SELF_COLLISION,
+            )
+        elif robot_version == RobotVersion.GRIPPER:
+            self.robot_id = p.loadURDF(
+                getPath("urdfs/iscoin_gripper.urdf"),
+                useFixedBase=True,
+                flags=p.URDF_USE_SELF_COLLISION,
+            )
+        else:
+            raise Exception("Robot version not supported")
+
         self.ground_id = p.loadURDF(getPath("urdfs/plane.urdf"), basePosition=[0, 0, 0])
 
         self.pen_joint = 11
