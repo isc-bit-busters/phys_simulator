@@ -2,6 +2,7 @@ import os
 import time
 import pybullet as p
 
+
 from .tools import getPath
 
 class Simulator:
@@ -9,7 +10,8 @@ class Simulator:
     gui: bool
     joint_mapping = {0: 2, 1: 3, 2: 4, 3: 5, 4: 6, 5: 7}
 
-    def __init__(self, gui: bool=False, deltaT: float = 1 / 100, log=False):
+    def __init__(self, gui: bool = False, deltaT: float = 1 / 100, log=False):
+
         self.gui = gui
 
 
@@ -26,6 +28,7 @@ class Simulator:
         self.robot_id = p.loadURDF(getPath("urdfs/iscoin_azz.urdf"), useFixedBase=True, flags=p.URDF_USE_SELF_COLLISION)
         self.ground_id = p.loadURDF(getPath("urdfs/plane.urdf"), basePosition=[0, 0, 0])
 
+        self.pen_joint = 11
 
         self._log("Simulator started")
 
@@ -84,26 +87,25 @@ class Simulator:
         return collided
 
     def isPenInArea(self, x_bounds=(-0.0, 0.5), y_bounds=(-0.5, 0.5), z_bounds=(0, 0.5)):
-
-        pen_pos = p.getLinkState(self.robot_id, self.penJoint)[0]
-        isInRectangle = True
+        pen_pos = p.getLinkState(self.robot_id, self.pen_joint)[0]
+        isInArea = True
         if pen_pos[0] < x_bounds[0] or pen_pos[0] > x_bounds[1]:
             self._log(f"The pen is currently out of the working area in X. (current X : {pen_pos[0]}, min - max : {x_bounds[0]} - {x_bounds[1]})")
-            isInRectangle = False
+            isInArea = False
         if pen_pos[1] < y_bounds[0] or pen_pos[1] > y_bounds[1]:
             self._log(f"The pen is currently out of the working area in Y. (current Y : {pen_pos[0]}, min - max : {y_bounds[0]} - {y_bounds[1]})")
-            isInRectangle =  False
+            isInArea = False
         if pen_pos[2] < z_bounds[0] or pen_pos[2] > z_bounds[1]:
             self._log(f"The pen is currently out of the working area in Z. (current Z : {pen_pos[0]}, min - max : {z_bounds[0]} - {z_bounds[1]})")
-            isInRectangle = False
+            isInArea = False
         # If the pen is within the working area, return True
-        return isInRectangle
+        return isInArea
 
-    def check_collision(self)-> tuple[bool, list[tuple[str, str]]]:
+    def check_collision(self) -> bool:
         contact_points_robot = p.getContactPoints(self.robot_id, self.robot_id)  # Self-collision check
         contact_points_ground = p.getContactPoints(self.robot_id, self.ground_id)  # Ground collision check
 
-        isInCollision = True
+        isNotInCollision = True
 
         def getLinkName(id):
             return (p.getJointInfo(self.robot_id, id)[12]).decode()
@@ -114,7 +116,7 @@ class Simulator:
                 if getLinkName(contact[3]) == "wrist_3_link" and getLinkName(contact[4]) == "pen_link":
                     continue
                 self._log(f"⚠️ Self-Collision: {getLinkName(contact[3])} and {getLinkName(contact[4])} are colliding.")
-                isInCollision = False
+                isNotInCollision = False
 
         # Check for ground collision
         if contact_points_ground:
@@ -122,12 +124,12 @@ class Simulator:
                 if getLinkName(contact[3]) == "base_link_inertia":
                     continue
                 self._log(f"⚠️ Collision with Ground: {getLinkName(contact[3])} touched the ground!")
-                isInCollision = False  # Collision detected
+                isNotInCollision = False  # Collision detected
 
         #if not self.check_working_area():
         #    isInCollision = False
 
-        return isInCollision
+        return isNotInCollision
         
 
 
@@ -136,4 +138,25 @@ class Simulator:
 if __name__ == "__main__":
     simu = Simulator(gui = True, log=True)
     print(simu._getLinkName(11))
-    
+
+    # Check for potential self-collisions within 5mm
+    # close_contacts_robot = p.getClosestPoints(self.robot_id, self.robot_id, distance=threshold_distance)
+    # close_contacts_ground = p.getClosestPoints(self.robot_id, self.ground_id, distance=threshold_distance)
+
+    # Check if a collision is **about to happen** within 5mm
+    # for contact in close_contacts_robot:
+    #     if (contact[3] == contact[4] or
+    #         abs(contact[3] - contact[4]) == 1 or
+    #         getLinkName(contact[3]) == "pen_link" or
+    #         getLinkName(contact[4]) == "pen_link"):  # Exclude collisions between the same link, adjacent links, or involving the pen link
+    #         continue
+    #     if self.logs:
+    #         print(f"WARNING: {getLinkName(contact[3])} is too close to {getLinkName(contact[4])} (within {threshold_distance})!")
+    #     isInCollision = False  # Prevent movement if too close
+
+    # for contact in close_contacts_ground:
+    #     if getLinkName(contact[3]) == "base_link_inertia":
+    #         continue
+    #     if self.logs:
+    #         print(f"WARNING: {getLinkName(contact[3])} is too close to the ground (within 5mm)!")
+    #     isInCollision = False  # Prevent movement if too close

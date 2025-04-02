@@ -297,21 +297,20 @@
     <child link="tool0"/>
   </joint>
 
-  <!-- Add pen link -->
-  <link name="pen_link">
+<link name="pen_link">
     <visual>
-      <origin xyz="0 0 0.08" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.005" length="0.16"/>
+        <cylinder radius="0.032" length="0.26"/>
       </geometry>
       <material name="pen_color">
         <color rgba="0.6 0.3 0.1 1.0"/>
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0.08" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.005" length="0.16"/>
+        <cylinder radius="0.032" length="0.26"/>
       </geometry>
     </collision>
     <inertial>
@@ -321,11 +320,11 @@
     </inertial>
   </link>
   
-  <!-- Add joint to attach pen to tool0 -->
-  <joint name="tool0-pen" type="fixed">
-    <parent link="tool0"/>
+  <!-- Add joint to attach pen to wrist_3_link -->
+  <joint name="wrist_3-pen" type="fixed">
+    <parent link="wrist_3_link"/>
     <child link="pen_link"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.125" rpy="0 0 0"/>
   </joint>
 
   <transmission name="robotiq_hande_left_finger_trans">
