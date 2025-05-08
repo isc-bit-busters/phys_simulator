@@ -149,6 +149,9 @@ class Simulator:
             for contact in contact_points_ground:
                 if getLinkName(contact[3]) == "base_link_inertia":
                     continue
+                if getLinkName(contact[3]) == "pen_link":
+                    self._log("Collision with Pen: The pen touched the ground!, but we ignore it")
+                    continue
                 self._log(f"⚠️ Collision with Ground: {getLinkName(contact[3])} touched the ground!")
                 isNotInCollision = False  # Collision detected
 
